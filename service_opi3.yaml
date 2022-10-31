@@ -1,0 +1,145 @@
+openapi: 3.0.1
+info:
+  title: Stubber API
+  version: 1.0.0
+servers:
+- url: /api/v1
+paths:
+  /stub/all:
+    get:
+      summary: Получить все заглушки
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+                  stubs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Stub'
+        default:
+          description: Fail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+  /stub:
+    post:
+      summary: Получить определенную заглушку
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stub'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+                  stub:
+                    $ref: '#/components/schemas/Stub'
+        default:
+          description: Fail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+  /stub/start:
+    post:
+      summary: Запустить заглушку
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stub'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                sucess:
+                    type: boolean
+                $ref: '#/components/schemas/Stub'
+        default:
+          description: Fail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+  /stub/stop:
+    post:
+      summary: Остановить заглушку
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Stub'
+        required: true
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                sucess:
+                    type: boolean
+                $ref: '#/components/schemas/Stub'
+        default:
+          description: Fail
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sucess:
+                    type: boolean
+components:
+  schemas:
+    Stub:
+      type: object
+      required: 
+        - path
+      properties:
+        jar:
+          type: string
+          example: credits_stub_b1.jar
+        path:
+          type: string
+          example: /usr/WF/stubs/credits_stub_b1.jar
+        state:
+          type: boolean
+        pid:
+          type: string
+          example: "77178"
+        port:
+          type: string
+          example: "8080"
+        cpu:
+          type: string
+          example: "10.1"
+        mem:
+          type: string
+          example: "1.2"
+          
