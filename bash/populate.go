@@ -1,7 +1,6 @@
 package bash
 
 import (
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -29,14 +28,14 @@ func between(value string, a string, b string) string {
 func Populate() ([]serv.Stub, error) { //[]main.Stub {
 	out, err := exec.Command("ps", "-e", "-o", "pid,pcpu,pmem,command").CombinedOutput()
 	if err != nil {
-		log.Fatalf("Error on ps call: %s", err)
+		return nil, err
 	}
 
 	lines := strings.Split(string(out), "\n")
 
 	out, err = exec.Command("ss", "-panlt").CombinedOutput()
 	if err != nil {
-		log.Fatalf("Error on ss call: %s", err)
+		return nil, err
 	}
 
 	sslines := strings.Split(string(out), "\n")
@@ -60,21 +59,21 @@ func Populate() ([]serv.Stub, error) { //[]main.Stub {
 	var stubs []serv.Stub //[]main.Stub
 
 	dir := "/home/kuro/dev/tmp" //, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Cannot get workdir:  %s", err)
-	}
+	// if err != nil {
+	// 	log.Fatalf("Cannot get workdir:  %s", err)
+	// }
 
-	var dirRun func(string)
+	var dirRun func(string) error
 
-	dirRun = func(path string) {
+	dirRun = func(path string) error {
 		fileInfo, err := os.Stat(path)
 		if err != nil {
-			log.Fatalf("FileStat error\n\t%s", err)
+			return err
 		}
 		if fileInfo.IsDir() {
 			dirs, err := os.ReadDir(path)
 			if err != nil {
-				log.Fatalf("Error on reading directory: %s", err)
+				return err
 			}
 
 			for _, d := range dirs {
@@ -103,7 +102,66 @@ func Populate() ([]serv.Stub, error) { //[]main.Stub {
 				stubs = append(stubs, s)
 			}
 		}
+		return nil
 	}
-	dirRun(dir)
+	err = dirRun(dir)
+	if err != nil {
+		return nil, err
+	}
 	return stubs, nil
+}
+
+func StubStatus(s *serv.Stub) error {
+	out, err := exec.Command("ps", "-e", "-o", "pid,pcpu,pmem,command").CombinedOutput()
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(out), "\n")
+
+	out, err = exec.Command("ss", "-panlt").CombinedOutput()
+	if err != nil {
+		return err
+	}
+
+	sslines := strings.Split(string(out), "\n")
+
+	var ports = make(map[string]string, 20)
+
+	for i, l := range sslines {
+		if i == 0 {
+			continue
+		}
+		t := strings.Fields(l)
+		if len(t) < 6 {
+			continue
+		}
+		tmp := strings.Split(t[3], ":")
+		port := tmp[1]
+		pid := between(t[5], "pid=", ",f")
+		ports[pid] = port
+	}
+
+	fileInfo, err := os.Stat(s.Path)
+	if err != nil {
+		return err
+	}
+	n := fileInfo.Name()
+	state := false
+	*s = serv.Stub{Jar: &n, Path: s.Path, State: &state}
+	for _, l := range lines {
+		if strings.Contains(l, s.Path) {
+			fl := strings.Fields(l)
+			s.Pid = &fl[0]
+			state = true
+			s.State = &state
+			s.Cpu = &fl[1]
+			s.Mem = &fl[2]
+			i := ports[fl[0]]
+			s.Port = &i
+			break
+		}
+	}
+
+	return nil
 }

@@ -12,6 +12,11 @@ import (
 type stubsMsg struct {
 	Success bool        `json:"sucess"`
 	Stubs   []serv.Stub `json:"stubs,omitempty"`
+	Stub    serv.Stub   `json:"stub,omitempty"`
+}
+
+type failMsg struct {
+	Success bool `json:"success"`
 }
 
 type StubberApp struct{}
@@ -29,6 +34,36 @@ func (s StubberApp) GetStubAll(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s StubberApp) PostStub(w http.ResponseWriter, r *http.Request) {
+	var stub serv.PostStubJSONRequestBody
+	// b, err := ioutil.ReadAll(r.Body)
+	// if err != nil {
+	// 	m, _ := json.Marshal(stubsMsg{Success: false})
+	// 	w.Write(m)
+	// }
+	// err = json.Unmarshal(b, &stub)
+	// if err != nil {
+	// 	m, _ := json.Marshal(stubsMsg{Success: false})
+	// 	w.Write(m)
+	// }
+	// if stub.Path == "" {
+	// 	m, _ := json.Marshal(stubsMsg{Success: false})
+	// 	w.Write(m)
+	// }
+	// m, _ := json.Marshal(stubsMsg{Success: true, Stub: stub})
+	// w.Write(m)
+
+	j := json.NewEncoder(w)
+	m := failMsg{Success: false}
+	if err := json.NewDecoder(r.Body).Decode(&stub); err != nil {
+		j.Encode(m)
+		return
+	}
+	if stub.Path == "" {
+		j.Encode(m)
+		return
+	}
+	bash.StubStatus(&stub)
+	j.Encode(stubsMsg{Success: true, Stub: stub})
 
 }
 
