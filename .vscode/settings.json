@@ -2,6 +2,7 @@
     "yaml.schemas": {
         "https://json.schemastore.org/swagger-2.0.json": [
             "file:///home/kuro/dev/golang/stubber_service/service_api.yml"
-        ]
+        ],
+        // "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.json": "file:///home/kuro/dev/golang/stubber_service/service_opi3.yaml"
     }
 }
