@@ -1,0 +1,6 @@
+{
+    "slaves" : [
+        "http://localhost:3000"
+    ],
+    "loglevel": "info"
+}

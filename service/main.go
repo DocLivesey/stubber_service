@@ -74,7 +74,7 @@ func (s StubberApp) PostStubStart(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s StubberApp) PostStubStop(w http.ResponseWriter, r *http.Request) {
-	var stub serv.PostStubStartJSONRequestBody
+	var stub serv.PostStubStopJSONRequestBody
 
 	j := json.NewEncoder(w)
 	m := failMsg{Success: false}
@@ -86,6 +86,7 @@ func (s StubberApp) PostStubStop(w http.ResponseWriter, r *http.Request) {
 		j.Encode(m)
 		return
 	}
+	//TODO PID check
 	if err := bash.StopStub(stub); err != nil {
 		j.Encode(m)
 		return

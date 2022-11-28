@@ -1,0 +1,16 @@
+start:
+    just tailwind 
+    just service
+stop:
+    just stop-service
+    just stop-tail
+tailwind:
+    #! /usr/bin/env bash
+    cd /home/kuro/dev/golang/stubber_service/master_site/style 
+    npx tailwindcss -i main.css -o ../static/style.css --watch &
+stop-tail:
+    kill $(ps -ef | grep npm | grep tail | awk '{print $2}')
+service:
+    cd ../service && ./stubber_service &
+stop-service:
+    kill $(ps -ef | grep stubber_service | grep -v grep | awk '{print $2}')

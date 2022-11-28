@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="cupcake">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Проверка заглушек</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+
+<body>
+    <div class="container">
+        <nav>
+            <div class="nav nav-tabs">
+                {{range $k,$v := .}}
+                <li class="nav-item">
+                    <a class="nav-link" id="{{$k}}-tab" data-bs-target="#tab-{{$k}}" data-bs-toggle="tab" role="tab"
+                        aria-selected="false">
+                        {{$k}}
+                    </a>
+                </li>
+                {{end}}
+            </div>
+        </nav>
+        <table class="table">
+            <thead class="table table-bordered table-dark">
+                <tr>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Host
+                    </th>
+                    <th>
+                        Port
+                    </th>
+                    <th>
+                        State
+                    </th>
+                    <th>
+                        PID
+                    </th>
+                    <th>
+                        CPU
+                    </th>
+                    <th>
+                        Mem
+                    </th>
+                    <th>
+                        Button
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table table-bordered">
+                {{range $k,$v := .}}
+                {{range .}}
+                <tr>
+                    <td>
+                        <span>{{.Jar}}</span><br>
+                        <small class="form-text text-muted">{{.Path}}</small>
+                    </td>
+                    <td>
+                        <p>{{ $k }}</p>
+                    </td>
+                    <td>
+                        <p class="text-break">{{ .Port }}</p>
+                    </td>
+                    <td>
+                        {{ if .State }}
+                        <span class="badge rounded-pill bg-success">Online</span>
+                        {{ else }}
+                        <span class="badge rounded-pill bg-danger">Offline</span>
+                        {{ end }}
+                    </td>
+                    <td>
+                        <p>{{ .Pid }}</p>
+                    </td>
+                    <td>
+                        <p>{{ .Cpu }}</p>
+                    </td>
+                    <td>
+                        <p>{{ .Mem }}</p>
+                    </td>
+                    <td>
+                        {{ if .State }}
+                        <a class="btn badge rounded-pill bg-danger"
+                            onclick="javascript:return confirm('Вы уверены, что хотите остановить {{ .Jar }} ?')"
+                            href="/stop?host={{$k}}&path={{.Path}}&pid={{.Pid}}">
+                            Stop
+                        </a>
+                        {{ else }}
+                        <a class="btn badge rounded-pill bg-success"
+                            onclick="javascript:return confirm('Вы уверены, что хотите запустить {{ .Jar }} ?')"
+                            href="/start?host={{$k}}&path={{.Path}}">
+                            Start
+                        </a>
+                        {{ end }}
+                    </td>
+                </tr>
+                {{end}}
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    <script src="/static/bootstrap.bundle.min.js" type="text/javascript"></script>
+
+</body>
+
+</html>

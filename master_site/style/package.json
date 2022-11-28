@@ -1,0 +1,16 @@
+{
+  "name": "style",
+  "version": "1.0.0",
+  "description": "tailwind css",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.4.13",
+    "daisyui": "^2.38.1",
+    "tailwind": "^4.0.0"
+  }
+}
